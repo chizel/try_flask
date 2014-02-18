@@ -3,6 +3,9 @@ from wtforms import TextField, BooleanField, TextAreaField
 from wtforms.validators import Required, Length
 from my_site.models import User
 
+class PostForm(Form):
+    post = TextField('post', validators = [Required()])
+
 class LoginForm(Form):
     openid = TextField('openid', validators = [Required()])
     remember_me = BooleanField('remember_me', default = False)

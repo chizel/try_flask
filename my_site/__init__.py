@@ -6,8 +6,17 @@ from flask.ext.openid import OpenID
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
 
 app = Flask(__name__)
-app.config.from_object('my_site.config')
+app.config.from_object('config')
 app.debug = True
+
+db = SQLAlchemy(app)
+
+lm = LoginManager()
+lm.init_app(app)
+lm.login_view = 'login'
+
+oid = OpenID(app, os.path.join(basedir, 'tmp'))
+
 
 if not app.debug:
     import logging
@@ -26,6 +35,7 @@ if not app.debug:
 
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
+
 if not app.debug:
     import logging
     from logging.handlers import RotatingFileHandler
@@ -43,13 +53,4 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     app.logger.info('microblog startup')
 
-db = SQLAlchemy(app)
-
-lm = LoginManager()
-lm.init_app(app)
-lm.login_view = 'login'
-
-oid = OpenID(app, os.path.join(basedir, 'tmp'))
-
 from my_site import views, models
-

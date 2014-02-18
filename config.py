@@ -24,3 +24,6 @@ MAIL_PASSWORD = None
 
 # administrator list
 ADMINS = ['chizel@inbox.ru']
+
+# pagination
+POSTS_PER_PAGE = 3
