@@ -18,7 +18,9 @@ def index(page = 1):
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
-    posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False).items
+    posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False)
+    import sys
+    sys.stdout.write(str(type(posts)))
     return render_template('index.html',
         title = 'Home',
         form = form,
@@ -81,15 +83,13 @@ def before_request():
 
 @app.route('/user/<nickname>')
 @login_required
-def user(nickname):
+def user(nickname, page=1):
     user = User.query.filter_by(nickname = nickname).first()
     if user == None:
         flash('User ' + nickname + ' not found.')
         return redirect(url_for('index'))
-    posts = [
-        { 'author': user, 'body': 'Test post #1' },
-        { 'author': user, 'body': 'Test post #2' }
-    ]
+    posts = user.posts.paginate(page, POSTS_PER_PAGE, False)
+    flash(str(page))
     return render_template('user.html',
         user = user,
         posts = posts)
