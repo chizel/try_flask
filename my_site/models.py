@@ -1,5 +1,6 @@
+import flask.ext.whooshalchemy as whooshalchemy
 from hashlib import md5
-from my_site import db
+from my_site import app, db
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -73,6 +74,7 @@ class User(db.Model):
         return '<User %r>' % (self.nickname)
 
 class Post(db.Model):
+    __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key = True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime)
@@ -80,3 +82,5 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post %r>' % (self.body)
+
+whooshalchemy.whoosh_index(app, Post)
