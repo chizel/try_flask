@@ -2,9 +2,9 @@ from datetime import datetime
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from my_site import app, db, lm, oid
-from forms import LoginForm, EditForm, PostForm
+from forms import LoginForm, EditForm, PostForm, SearchForm
 from models import User, ROLE_USER, ROLE_ADMIN, Post
-from config import POSTS_PER_PAGE
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS
 
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/index', methods = ['GET', 'POST'])
@@ -12,15 +12,18 @@ from config import POSTS_PER_PAGE
 @login_required
 def index(page = 1):
     form = PostForm()
+
     if form.validate_on_submit():
-        post = Post(body = form.post.data, timestamp = datetime.utcnow(), author = g.user)
+        post = Post(body = form.post.data,
+                timestamp = datetime.utcnow(),
+                author = g.user)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
+
     posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False)
-    import sys
-    sys.stdout.write(str(type(posts)))
+
     return render_template('index.html',
         title = 'Home',
         form = form,
@@ -31,10 +34,14 @@ def index(page = 1):
 def login():
     if g.user is not None and g.user.is_authenticated():
         return redirect(url_for('index'))
+
     form = LoginForm()
+
     if form.validate_on_submit():
         session['remember_me'] = form.remember_me.data
-        return oid.try_login(form.openid.data, ask_for = ['nickname', 'email'])
+        return oid.try_login(form.openid.data,
+                ask_for = ['nickname', 'email'])
+
     return render_template('login.html', 
         title = 'Sign In',
         form = form,
@@ -80,6 +87,7 @@ def before_request():
         g.user.last_seen = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
+        g.search_form = SearchForm()
 
 @app.route('/user/<nickname>')
 @login_required
@@ -152,6 +160,21 @@ def unfollow(nickname):
     db.session.commit()
     flash('You have stopped following ' + nickname + '.')
     return redirect(url_for('user', nickname = nickname))
+
+@app.route('/search', methods = ['POST'])
+@login_required
+def search():
+    if not g.search_form.validate_on_submit():
+        return redirect(url_for('index'))
+    return redirect(url_for('search_results', query = g.search_form.search.data))
+
+@app.route('/search_results/<query>')
+@login_required
+def search_results(query):
+    results = Post.query.whoosh_search(query, MAX_SEARCH_RESULTS).all()
+    return render_template('search_results.html',
+        query = query,
+        results = results)
 
 @app.errorhandler(404)
 def internal_error(error):
