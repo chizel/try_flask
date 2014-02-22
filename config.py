@@ -19,11 +19,13 @@ OPENID_PROVIDERS = [
     { 'name': 'MyOpenID', 'url': 'https://www.myopenid.com' },
     { 'name': 'StackExchange', 'url': 'https://openid.stackexchange.com' }]
 
-# mail server settings
-MAIL_SERVER = 'localhost'
+# email server
+MAIL_SERVER = 'smtp.inbox.ru'
 MAIL_PORT = 25
-MAIL_USERNAME = None
-MAIL_PASSWORD = None
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = ''
+MAIL_PASSWORD = ''
 
 # administrator list
 ADMINS = ['chizel@inbox.ru']
