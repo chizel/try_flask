@@ -20,11 +20,11 @@ OPENID_PROVIDERS = [
     { 'name': 'StackExchange', 'url': 'https://openid.stackexchange.com' }]
 
 # email server
-MAIL_SERVER = 'smtp.inbox.ru'
-MAIL_PORT = 25
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_USERNAME = ''
+MAIL_USERNAME = 'prohibity@gmail.com'
 MAIL_PASSWORD = ''
 
 # administrator list

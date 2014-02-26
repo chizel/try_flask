@@ -37,3 +37,6 @@ nosetests.xml
 
 #tmp folder for OpenID
 tmp/
+
+#config file
+config.py
