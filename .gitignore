@@ -40,3 +40,6 @@ tmp/
 
 #config file
 config.py
+
+#vim swap files
+.swp
