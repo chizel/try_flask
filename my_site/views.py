@@ -99,7 +99,6 @@ def user(nickname, page=1):
         flash('User ' + nickname + ' not found.')
         return redirect(url_for('index'))
     posts = user.posts.paginate(page, POSTS_PER_PAGE, False)
-    flash(str(page))
     return render_template('user.html',
         user = user,
         posts = posts)
