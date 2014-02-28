@@ -1,7 +1,7 @@
-from decorators import async
 from flask import render_template
 from flask.ext.mail import Message
 from my_site import mail
+from decorators import async
 from config import ADMINS
 
 @async    
@@ -25,3 +25,4 @@ def follower_notification(followed, follower):
             user = followed, follower = follower),
         render_template("follower_email.html", 
             user = followed, follower = follower))
+        

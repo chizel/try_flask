@@ -15,3 +15,4 @@ class momentjs(object):
 
     def fromNow(self):
         return self.render("fromNow()")
+
